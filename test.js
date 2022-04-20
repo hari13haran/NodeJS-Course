@@ -3,3 +3,6 @@ const greet = (name) => {
 }
 
 greet('hariharan');
+
+console.log(__dirname);
+console.log(__filename);
