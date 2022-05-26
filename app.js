@@ -13,16 +13,21 @@ app.listen(3000);
 app.get('/', (req,res) => {
     // res.send('<p>Hello! Home page</p>');
     // res.sendFile('./views-html/index.html', {root: __dirname});
-    res.render('index');
+    const blogs = [
+        {title: 'Yoshi finds eggs', snippet: 'Lorem ipsum dolor sit amet consectetur'},
+        {title: 'Mario finds stars', snippet: 'Lorem ipsum dolor sit amet consectetur'},
+        {title: 'How to defeat bowser', snippet: 'Lorem ipsum dolor sit amet consectetur'},
+    ];
+    res.render('index', { title: 'Home', blogs });
 });
 
 app.get('/about', (req,res) => {
     // res.sendFile('./views-html/about.html', {root: __dirname});
-    res.render('about');
+    res.render('about', { title: 'About' });
 });
 
 app.get('/blogs/create', (req, res) => {
-    res.render('create');
+    res.render('create', { title: 'Create a new blog' });
 });
 
 // Redirecting routes
@@ -33,5 +38,5 @@ app.get('/blogs/create', (req, res) => {
 // 404 Error page. Note: it should always be the last method in the file
 app.use((req,res) => {
     // res.status(404).sendFile('./views-html/404.html', {root: __dirname});
-    res.render('404');
+    res.render('404', { title: '404' });
 });
