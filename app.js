@@ -50,7 +50,7 @@ app.get('/blogs/create', (req, res) => {
     res.render('create', { title: 'Create a new blog' });
 });
 
-// fetch all blogs from DB & display on index page
+// GET request to fetch all blogs from DB & display on index page
 app.get('/blogs', (req,res) => {
     Blog.find().sort({ createdAt: -1 })
         .then((result) => {
@@ -104,6 +104,18 @@ app.post('/blogs', (req,res) => {
     blog.save()
         .then((result) => {
             res.redirect('/blogs');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+});
+
+// GET request to fetch single blog with _id
+app.get('/blogs/:id', (req,res) => {
+    const id = req.params.id;
+    Blog.findById(id)
+        .then((result) => {
+            res.render('details', { title:'Blog Details', blog: result});
         })
         .catch((err) => {
             console.log(err);
