@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Blog = require('./models/blog');
+const { result } = require('lodash');
 
 // create express app
 const app = express();
@@ -24,6 +25,9 @@ app.use(express.static('public'));
 // 3rd party middleware to log request details
 app.use(morgan('dev'));
 
+// Middleware to parse data coming from UI
+app.use(express.urlencoded({ extended: true }));
+
 // Routing and sending html pages
 app.get('/', (req,res) => {
     // res.send('<p>Hello! Home page</p>');
@@ -42,43 +46,11 @@ app.get('/about', (req,res) => {
     res.render('about', { title: 'About' });
 });
 
-// blog routes basic save,find,findById
-app.get('/add-blog', (req,res) => {
-    const blog = new Blog({
-        title: 'new blog 2',
-        snippet: 'about my new blog',
-        body: 'More about my new blog'
-    });
-    blog.save()
-        .then((result)=> {
-            res.send(result)
-        })
-        .catch((err)=> {
-            console.log(err)
-        });
+app.get('/blogs/create', (req, res) => {
+    res.render('create', { title: 'Create a new blog' });
 });
 
-app.get('/all-blogs', (req,res) => {
-    Blog.find()
-        .then((result) => {
-            res.send(result);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-});
-
-app.get('/single-blog', (req,res) => {
-    Blog.findById('62a784e80c1eed7ea12c296b')
-        .then((result) => {
-            res.send(result)
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-});
-
-// blog specific routes
+// fetch all blogs from DB & display on index page
 app.get('/blogs', (req,res) => {
     Blog.find().sort({ createdAt: -1 })
         .then((result) => {
@@ -89,8 +61,53 @@ app.get('/blogs', (req,res) => {
         })
 });
 
-app.get('/blogs/create', (req, res) => {
-    res.render('create', { title: 'Create a new blog' });
+// blog routes basic save,find,findById
+// app.get('/add-blog', (req,res) => {
+//     const blog = new Blog({
+//         title: 'new blog 2',
+//         snippet: 'about my new blog',
+//         body: 'More about my new blog'
+//     });
+//     blog.save()
+//         .then((result)=> {
+//             res.send(result)
+//         })
+//         .catch((err)=> {
+//             console.log(err)
+//         });
+// });
+
+// app.get('/all-blogs', (req,res) => {
+//     Blog.find()
+//         .then((result) => {
+//             res.send(result);
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         });
+// });
+
+// app.get('/single-blog', (req,res) => {
+//     Blog.findById('62a784e80c1eed7ea12c296b')
+//         .then((result) => {
+//             res.send(result)
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         });
+// });
+
+// POST request to save blogs in DB
+app.post('/blogs', (req,res) => {
+    const blog = new Blog(req.body);
+
+    blog.save()
+        .then((result) => {
+            res.redirect('/blogs');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 });
 
 // Redirecting routes
