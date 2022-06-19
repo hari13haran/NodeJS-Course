@@ -122,6 +122,19 @@ app.get('/blogs/:id', (req,res) => {
         })
 });
 
+// DELETE request to delete a single blog with _id
+app.delete('/blogs/:id', (req,res) => {
+    const id = req.params.id;
+    Blog.findByIdAndDelete(id)
+        .then((result) => {
+            // the redirect needs to be handled in browser since its an AJAX request
+            res.json({ redirect: '/blogs' });
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+});
+
 // Redirecting routes
 // app.get('/about-us', (req,res) => {
 //     res.redirect('/about');
