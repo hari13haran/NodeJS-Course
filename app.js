@@ -1,8 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const Blog = require('./models/blog');
 const { result } = require('lodash');
+const blogRoutes = require('./routes/blogRoutes');
 
 // create express app
 const app = express();
@@ -46,21 +46,6 @@ app.get('/about', (req,res) => {
     res.render('about', { title: 'About' });
 });
 
-app.get('/blogs/create', (req, res) => {
-    res.render('create', { title: 'Create a new blog' });
-});
-
-// GET request to fetch all blogs from DB & display on index page
-app.get('/blogs', (req,res) => {
-    Blog.find().sort({ createdAt: -1 })
-        .then((result) => {
-            res.render('index', { title: 'All blogs', blogs: result})
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-});
-
 // blog routes basic save,find,findById
 // app.get('/add-blog', (req,res) => {
 //     const blog = new Blog({
@@ -97,43 +82,8 @@ app.get('/blogs', (req,res) => {
 //         });
 // });
 
-// POST request to save blogs in DB
-app.post('/blogs', (req,res) => {
-    const blog = new Blog(req.body);
-
-    blog.save()
-        .then((result) => {
-            res.redirect('/blogs');
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-});
-
-// GET request to fetch single blog with _id
-app.get('/blogs/:id', (req,res) => {
-    const id = req.params.id;
-    Blog.findById(id)
-        .then((result) => {
-            res.render('details', { title:'Blog Details', blog: result});
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-});
-
-// DELETE request to delete a single blog with _id
-app.delete('/blogs/:id', (req,res) => {
-    const id = req.params.id;
-    Blog.findByIdAndDelete(id)
-        .then((result) => {
-            // the redirect needs to be handled in browser since its an AJAX request
-            res.json({ redirect: '/blogs' });
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-});
+// Blog Routes
+app.use('/blogs', blogRoutes);
 
 // Redirecting routes
 // app.get('/about-us', (req,res) => {
