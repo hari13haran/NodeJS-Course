@@ -23,7 +23,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 // 3rd party middleware to log request details
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 // Middleware to parse data coming from UI
 app.use(express.urlencoded({ extended: true }));
